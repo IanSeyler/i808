@@ -1,0 +1,422 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<style>BODY, P, DIV, H1, H2, H3, H4, H5, H6, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT 
+{ 
+ font-family: Verdana 
+}
+BODY, P, DIV, ADDRESS, OL, UL, LI, TITLE, TD, OPTION, SELECT  
+{  
+  font-size: 10.0pt; 
+  margin-top:0pt;  
+  margin-bottom:0pt;  
+} 
+BODY, P
+{
+  margin-left:0pt; 
+  margin-right:0pt;
+}
+BODY
+{
+  background: white;
+  margin: 6px;
+  padding: 0px;
+}
+h6 { font-size: 10pt }
+h5 { font-size: 11pt }
+h4 { font-size: 12pt }
+h3 { font-size: 13pt }
+h2 { font-size: 14pt }
+h1 { font-size: 16pt }
+blockquote { padding: 10px; border: 1px #DDDDDD dashed }
+a img {	border: 0; }
+table.zeroBorder {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+table.zeroBorder th {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+table.zeroBorder td {
+	border-width: 1px 1px 1px 1px;
+	border-style: dotted dotted dotted dotted;
+	border-color: gray gray gray gray;
+}
+.hiddenStyle {
+		visibility: hidden; 
+		position: absolute;
+		z-Index: 1;
+		paddingRight: 0;
+		background: white
+	}
+.misspell { background-image: url('/images/misspell.gif'); background-repeat: repeat-x; background-position: bottom }
+@media screen {
+.pb { border-top: 1px dashed #C0C0C0; border-bottom: 1px dashed #C0C0C0 }
+.writely-comment { font-size: 9pt; line-height: 1.4em; padding: 1px; border: 1px dashed #C0C0C0 }
+}
+@media print {
+.pb { border-top: 0px; border-bottom: 0px }
+.writely-comment { display: none }
+}
+@media screen,print {
+.pb { height: 1px }
+}
+</style></head>
+<body revision='dg45ttft_0fxtgw9:59'>
+<div style=TEXT-ALIGN:justify>
+  <h1>
+    <span style=TEXT-DECORATION:underline> i808 Manual</span>
+  </h1>
+</div>
+<h1>
+</h1>
+This is the manual for the i808 Virtual CPU.<br>
+<br>
+<h1>
+  Specifications
+</h1>
+8-bit architecture<br>
+4 8-bit general purpose registers (A, B, C, D)<br>
+1 8-bit instruction pointer (IP)<br>
+2 1-bit flags (Zero, Carry)<br>
+256 bytes of addressable memory<br>
+16 data ports for external communication<br>
+16 bytes of stack memory<br>
+4 bytes of instruction pointer stack memory<br>
+<br>
+<br>
+<h1>
+  Architecture
+</h1>
+The architecture of the i808 CPU is strictly 8-bit. This means the highest value
+the CPU can use is 255 (0 is the lowest). Issues will arise when two large
+values are added together for instance.<br>
+<br>
+2 + 2 = 4 &lt;- OK<br>
+200 + 50 = 250 &lt;- OK<br>
+255 + 1 = 0 &lt;- Overflow<br>
+255 + 10 = 9 &lt;- Overflow<br>
+<br>
+<br>
+<h2>
+  Stack
+</h2>
+The stack of the i808 CPU uses a Last in, first out structure (also known as
+"First In, Last out").<br>
+Please see the Wikipedia article for more info:
+<a href=http://en.wikipedia.org/wiki/LIFO target=blank_ title=http://en.wikipedia.org/wiki/LIFO>http://en.wikipedia.org/wiki/LIFO</a><br>
+<br>
+<br>
+<h1>
+  Opcodes
+</h1>
+<br>
+All opcodes that allow for dual arguments have the same sequence.<br>
+&nbsp;&nbsp;&nbsp; <span style=COLOR:#000099>OPCODE</span>
+<span style=COLOR:#660000>DESTINATION</span>,
+<span style=COLOR:#006600>SOURCE</span><br>
+Otherwise single argument instruction use this mnemonic.<br>
+&nbsp;&nbsp;&nbsp; <span style=COLOR:#000099>OPCODE</span>
+<span style=COLOR:#660000>DESTINATION</span><br>
+Some opcodes require no arguments.<br>
+&nbsp;&nbsp;&nbsp; <span style=COLOR:#000099>OPCODE</span><br>
+<br>
+<h2>
+  Data Transfers
+</h2>
+<br>
+These opcodes allow you to transfer bytes of data between the registers, memory
+and stack.<br>
+<br>
+<h3>
+  MOV (MOVe data)
+</h3>
+<br>
+The MOV command will copy a byte from the source to the destination. You can
+move data between the registers, an immediate value into a register, between the
+registers and memory, and between memory pointers and registers.<br>
+<br>
+The MOV instruction copies the contents of the source operand into the
+destination operand.<br>
+<br>
+&nbsp;&nbsp;&nbsp; mov reg, reg&nbsp;&nbsp;&nbsp; eg: mov A, B&nbsp;&nbsp;&nbsp;
+A = B<br>
+&nbsp;&nbsp;&nbsp; mov reg, val&nbsp;&nbsp;&nbsp; eg: mov B,
+45&nbsp;&nbsp;&nbsp; B = 45<br>
+&nbsp;&nbsp;&nbsp; mov mem, reg&nbsp;&nbsp;&nbsp; eg: mov 23, C<br>
+&nbsp;&nbsp;&nbsp; mov reg, mem&nbsp;&nbsp;&nbsp; eg: mov D, 62<br>
+&nbsp;&nbsp;&nbsp; mov &amp;reg, reg&nbsp;&nbsp;&nbsp; eg: mov &amp;A, B<br>
+&nbsp;&nbsp;&nbsp; mov reg, &amp;reg&nbsp;&nbsp;&nbsp; eg: mov C, &amp;D<br>
+<br>
+<h3>
+  PUSH
+</h3>
+<br>
+The PUSH command will push the value in a register onto the stack.<br>
+<br>
+&nbsp;&nbsp;&nbsp; push reg&nbsp;&nbsp;&nbsp; eg: push A<br>
+<br>
+<h3>
+  POP
+</h3>
+<br>
+The POP command will pop the next value in the stack into the register.<br>
+<br>
+&nbsp;&nbsp;&nbsp; pop reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: pop B<br>
+<br>
+<h3>
+  PUSHA (PUSH All)
+</h3>
+<br>
+The PUSHA command will push all register onto the stack.<br>
+<br>
+&nbsp;&nbsp;&nbsp; pusha<br>
+<br>
+<h3>
+  POPA (POP All)
+</h3>
+<br>
+The POPA command will pop the next values on the stack into the registers.<br>
+<br>
+&nbsp;&nbsp;&nbsp; popa<br>
+<br>
+<br>
+<br>
+<h2>
+  Arithmetic
+</h2>
+<br>
+These opcodes do various arithmetic using registers. Beware of overflows!<br>
+<br>
+<h3>
+  ADD (ADDition)
+</h3>
+<br>
+The ADD opcode will add the destination and source together and place the result
+into the destination.<br>
+<br>
+&nbsp;&nbsp;&nbsp; add reg, reg&nbsp;&nbsp;&nbsp; eg: add A, B&nbsp;&nbsp;&nbsp;
+A = A + B<br>
+&nbsp;&nbsp;&nbsp; add reg, val&nbsp;&nbsp;&nbsp; eg: add C,
+12&nbsp;&nbsp;&nbsp; C = C + 12<br>
+<br>
+<h3>
+  SUB (SUBtraction)
+</h3>
+<br>
+The SUB opcode will subtract the source from the destination and place the
+result into the destination.<br>
+<br>
+&nbsp;&nbsp;&nbsp; sub reg, reg&nbsp;&nbsp;&nbsp; eg: sub A, B&nbsp;&nbsp;&nbsp;
+A = A - B<br>
+&nbsp;&nbsp;&nbsp; sub reg, val&nbsp;&nbsp;&nbsp; eg: sub C,
+12&nbsp;&nbsp;&nbsp; C = C - 12<br>
+<br>
+<h3>
+  INC (INCrement)
+</h3>
+<br>
+The INC opcode will increase the register by 1.<br>
+<br>
+&nbsp;&nbsp;&nbsp; inc reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: inc
+A&nbsp;&nbsp;&nbsp; A = A + 1<br>
+<br>
+<h3>
+  DEC (DECrement)
+</h3>
+<br>
+The DEC opcode will decrease the register by 1.<br>
+<br>
+&nbsp;&nbsp;&nbsp; dec reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: dec
+B&nbsp;&nbsp;&nbsp; B = B - 1<br>
+<br>
+<h3>
+  CMP (CoMPare)
+</h3>
+<br>
+The CMP command will compare argument 1 with argument 2. Based on output it will
+set the Zero and Carry flags. The logic is as follows:<br>
+<br>
+&nbsp;&nbsp;&nbsp; if op1 = op2 then Zero = 1 else Zero = 0<br>
+&nbsp;&nbsp;&nbsp; if op1 &lt; op2 then Carry = 0<br>
+&nbsp;&nbsp;&nbsp; if op1 &gt; op2 then Carry = 1<br>
+<br>
+The CMP command will be used for deciding jumps in the programs. You can compare
+a register with another register or a register with an immediate value.<br>
+<br>
+&nbsp;&nbsp;&nbsp; cmp reg, reg&nbsp;&nbsp;&nbsp; eg: cmp A, B<br>
+&nbsp;&nbsp;&nbsp; cmp reg, val&nbsp;&nbsp;&nbsp; eg: cmp C, 27<br>
+<br>
+<br>
+<br>
+<h2>
+  Bitwise
+</h2>
+<br>
+These opcodes work with registers at the bit level. For more information on this
+please see the Wikipedia entry:
+<a href=http://en.wikipedia.org/wiki/Logic_gates title="Logic Gates">Logic
+Gates</a><br>
+<br>
+<h3>
+  AND
+</h3>
+&nbsp;&nbsp;&nbsp; and reg, reg&nbsp;&nbsp;&nbsp; eg: and A, B<br>
+<br>
+<h3>
+  OR
+</h3>
+&nbsp;&nbsp;&nbsp; or reg, reg&nbsp;&nbsp;&nbsp; eg: or C, D<br>
+<br>
+<h3>
+  XOR
+</h3>
+&nbsp;&nbsp;&nbsp; xor reg, reg&nbsp;&nbsp;&nbsp; eg: xor A, B<br>
+<br>
+<h3>
+  NOT
+</h3>
+&nbsp;&nbsp;&nbsp; not reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: not A<br>
+<br>
+<h3>
+  BSL (Bit Shift Left)
+</h3>
+&nbsp;&nbsp;&nbsp; bsl reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: bsl B<br>
+<br>
+<h3>
+  BSR (Bit Shift Right)
+</h3>
+&nbsp;&nbsp;&nbsp; bsr reg&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; eg: bsr C<br>
+<br>
+<br>
+<br>
+<h2>
+  Program Flow
+</h2>
+<br>
+These commands allow you to interrupt the program flow based on previous opcodes
+(like CMP). They will evaluate the status of the Zero and Carry flags.<br>
+<br>
+<h3>
+  JMP (JuMP)
+</h3>
+&nbsp;&nbsp;&nbsp; jmp mem<br>
+<br>
+<h3>
+  JL (Jump if Less)
+</h3>
+&nbsp;&nbsp;&nbsp; jl mem&nbsp;&nbsp; eg: if carry = 0 then jump to memory
+address<br>
+<br>
+<h3>
+  JLE (Jump if Less or Equal)
+</h3>
+&nbsp;&nbsp;&nbsp; jle mem&nbsp;&nbsp; eg: if carry = 0 or zero = 1 then jump to
+memory address<br>
+<br>
+<h3>
+  JE (Jump if Equal)
+</h3>
+&nbsp;&nbsp;&nbsp; je mem&nbsp;&nbsp; eg: if zero = 1 then jump to memory
+address<br>
+<br>
+<h3>
+  JGE (Jump if Greater or Equal)
+</h3>
+&nbsp;&nbsp;&nbsp; jge mem&nbsp;&nbsp; eg: if carry = 1 or zero = 1 then jump to
+memory address<br>
+<br>
+<h3>
+  JG (Jump if Greater)
+</h3>
+&nbsp;&nbsp;&nbsp; jg mem&nbsp;&nbsp; eg: if carry = 1 then jump to memory
+address<br>
+<br>
+<h3>
+  JNE (Jump if Not Equal)
+</h3>
+&nbsp;&nbsp;&nbsp; jne mem&nbsp;&nbsp; eg: if zero = 0 then jump to memory
+address<br>
+<br>
+<h3>
+  JSF (Jump Short Forward)
+</h3>
+&nbsp;&nbsp;&nbsp; jsf reg<br>
+<br>
+<h3>
+  JSB (Jump Short Backward)
+</h3>
+&nbsp;&nbsp;&nbsp; jsb reg<br>
+<br>
+<h3>
+  CALL (CALL function)
+</h3>
+&nbsp;&nbsp;&nbsp; call mem<br>
+<br>
+The CALL instruction sets the CPU to jump to a specific address where a function
+is located. Make sure you have a RET opcode at the end of your function so your
+program returns to normal operation.<br>
+<br>
+&nbsp;&nbsp;&nbsp; call 212<br>
+<br>
+<h3>
+  RET (RETurn)
+</h3>
+<br>
+The RET instruction returns program flow back to where the last CALL instruction
+was called.<br>
+<br>
+&nbsp;&nbsp;&nbsp; ret<br>
+<br>
+<br>
+<br>
+<h2>
+  I/O
+</h2>
+<br>
+These opcodes allow you to move data into and out of the CPU. The IN and OUT
+opcode modify the ZERO flag based on whether the operation was a success. Each
+port has a flag. When the flag is set then there is data waiting to be used. If
+the flag for a port is not set then there is nothing waiting. Like a mailbox.<br>
+<br>
+<h3>
+  IN (INput)
+</h3>
+<br>
+The IN instruction copies a byte from the source operand into the destination
+operand. This will also set the carry flag based on if the port flag was high.
+You can check if there was something that was actually read by doing a "jl
+NoRead".<br>
+<br>
+&nbsp;&nbsp;&nbsp; in reg, preg&nbsp;&nbsp;&nbsp; eg: in A, B<br>
+<br>
+<h3>
+  OUT (OUTput)
+</h3>
+<br>
+The OUT instruction copies a byte from the source operand into the destination
+operand. This will also set the flag on the port to high.<br>
+<br>
+&nbsp;&nbsp;&nbsp; out preg, reg&nbsp;&nbsp;&nbsp; eg: out C, D<br>
+<br>
+<br>
+<br>
+<h2>
+  Miscellaneous
+</h2>
+<br>
+<h3>
+  NOP (No Operation)
+</h3>
+<br>
+The NOP instruction does nothing. It will only increment the Instruction Pointer
+by 1.<br>
+<br>
+&nbsp;&nbsp;&nbsp; nop<br>
+<br>
+<br>
+<br></body>
+</html>
