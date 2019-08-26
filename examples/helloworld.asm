@@ -4,7 +4,7 @@
 dest=i808
 
 :Start
-	mov A, Message	// memory address of start of message //
+	mov A, 0x30	// memory address of start of message //
 	mov D, 0x0F	// port to write message to //
 :Next
 	mov B, [A]	// get a byte of the message //
